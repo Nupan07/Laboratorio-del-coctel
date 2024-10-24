@@ -26,6 +26,7 @@ def visualizar_audio(audio, frecuencia_muestreo, titulo=''):
 
     # Dominio del tiempo
     plt.subplot(2, 1, 1)
+    
     plt.plot(tiempo, audio)
     plt.title(f'{titulo} - Dominio del Tiempo')
     plt.xlabel('Tiempo (s)')
