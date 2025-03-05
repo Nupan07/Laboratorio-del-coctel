@@ -19,23 +19,23 @@ como el Análisis de Componentes Independientes (ICA) o el ¨Beamforming¨.
 
 ## ESTRUCTURA DEL LABORATORIO
 
-1) # CONFIGURACION DEL SISTEMA
+1) # Configuracion del sistema
   *descargar micrifonos para tomar las señales requeridas 
   *Ubicar a las dos personas en diferentes lugares o posciones dentro 
   del lugar donde se tomara las señales  requeridas 
   
-2) # CAPTURA DE LA SEÑAL
+2) # Captura de la señal
    *Cada persona pronuncia frases distintas mientras se graban las señales con los micrófonos.
    *se mide la relación señal/ruido (SNR) para evaluar la calidad de las grabaciones.
    
-4) # PROCESAMIENTO DE SEÑALES
+4) # Procesamiento de la señal 
    *implementación de métodos de separación de fuentes (ICA, Beamforming, etc.).
 
-5) # EVALUACION DE RESULTADOS
+5) # Evalucion de resltados 
    *Comparar la señal aislada con la original mediante métricas como la relación señal/ruido.
    *Analizar cómo la ubicación de los micrófonos afecta la separación de señales.
    
-## Materiales Necesarios
+## MATERIALES NECESARIOS
 1)Computador con acceso a internet.
 2)Software de procesamiento de señales (Python).
 3)Dos micrófonos.
