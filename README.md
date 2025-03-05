@@ -60,4 +60,31 @@ como el Análisis de Componentes Independientes (ICA) o el ¨Beamforming¨.
 
 *Análisis de la efectividad del método empleado y sugerencias de mejora.
 
+## ICA(Análisis de Componentes Independientes )
+Es una técnica de procesamiento de señales utilizada para separar señales mezcladas en sus componentes originales. En este laboratorio, el ICA se aplica al Problema del Cóctel, donde múltiples voces son grabadas simultáneamente por varios micrófonos, generando señales mezcladas.
+
+El ICA asume que un conjunto de señales observadas (mezcladas) son combinaciones lineales de un conjunto de señales fuente desconocidas e independientes. Su objetivo es encontrar una transformación matemática que desmezcle las señales y recupere las fuentes originales.
+
+Matemáticamente, si tenemos 𝑛 fuentes sonoras (voces) captadas por 𝑛 micrófonos, la relación entre ellas se puede modelar como:
+
+            X=AS
+Donde:
+
+X es la matriz de señales observadas (las grabaciones de los micrófonos).
+
+S es la matriz de las señales fuente originales (las voces individuales).
+
+A es una matriz de mezclado desconocida (define cómo las voces se combinan en los micrófonos).
+
+# ¿Cómo funciona el ICA ?
+
+El ICA funciona bajo dos suposiciones clave:
+
+1)Las fuentes de sonido son estadísticamente independientes entre sí (por ejemplo, las voces de diferentes personas no están relacionadas matemáticamente).
+
+2)Las señales originales tienen distribuciones no gaussianas (como la voz humana, que presenta patrones específicos en el tiempo y la frecuencia).
+
+Usan el ICA descomponemos las señales mezcladas en un conjunto de señales independientes, tratando de reconstruir las voces originales a partir de las grabaciones.
+
+Después de aplicar ICA, obtendrás dos archivos de audios separados, cada uno con la voz de una persona diferente, minimizando el ruido de las otras voces.
 
