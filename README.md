@@ -127,5 +127,75 @@ archivos_voces = [r"C:\Users\USER\Music\señales\lab del coctel\Audio1.wav",
                   r"C:\Users\USER\Music\señales\lab del coctel\Audio2.wav"]
 archivos_ruido = [r"C:\Users\USER\Music\señales\lab del coctel\Ruidocel1.wav", 
                   r"C:\Users\USER\Music\señales\lab del coctel\Ruido2.wav"]
-# 1)CARGA Y DISTRIBUCION DEL AUDIO 
+                  
+# 1)CARGA , DISTRIBUCION y REPRODUCCION DEL AUDIO 
 
+     def cargar_audio(ruta):
+         señal, tasa_muestreo = librosa.load(ruta, sr=None)
+         return señal, tasa_muestreo
+         
+Aca se especifica los datos de onda y la cantidad de muestras por segundo que se mostraran 
+
+    def reproducir_audio(señal, tasa_muestreo):
+         sd.play(señal / np.max(np.abs(señal)), tasa_muestreo)
+         sd.wait()
+Normaliza la señal (para evitar distorsión) y la reproduce. (sd.wait()) asegura que la reproducción termine antes de continuar.
+
+# 2)MEZCLAR VOCES Y RUIDOES 
+
+    def combinar_todos(archivos_audio, archivos_ruido):
+       señales = [cargar_audio(archivo)[0] for archivo in archivos_audio + archivos_ruido]
+       tamaño_min = min(map(len, señales))
+       mezcla = sum(señal[:tamaño_min] for señal in señales) / len(señales)
+       return np.column_stack((mezcla,)), cargar_audio(archivos_audio[0])[1]
+       
+ Carga todas las señales de voz y ruido,ajusta la longitud de todas las señales al tamaño más corto y crea una mezcla sumando y promediando las señales.
+
+# 3)SEPARACION DE FUENTES DE ICA
+
+    def separar_fuentes(señal):
+       modelo_ica = FastICA(n_components=1, max_iter=1000, tol=0.0001)
+       componentes = modelo_ica.fit_transform(señal)
+       return componentes / np.max(np.abs(componentes))
+       
+Crea un modelo ICA con FastICA(n_components=1), lo que significa que intentará extraer una sola fuente de la mezcla de señales se ejecuta la separación con fit_transform(señal), que intenta encontrar la señal original sinruido y normaliza la salida para evitar distorsiones en la amplitud.
+
+# 4)APLICACION DE BEAMFORMING
+
+    def aplicar_beamforming(señal):
+       U, S, Vt = svd(señal, full_matrices=False)
+       señal_filtrada = np.outer(U[:, 0] * S[0], Vt[0, :])
+       return señal_filtrada / np.max(np.abs(señal_filtrada))
+       
+Aplica SVD: La función svd(señal, full_matrices=False) descompone la señal en 3 matrices:
+
+U → Representa las características de la señal.
+
+S → Representa los valores singulares (importancia de cada componente).
+
+Vt → Contiene información de las direcciones de los datos.
+
+Reconstruye la señal usando solo el primer valor singular (S[0]), que generalmente contiene la información más importante y normaliza la señal para evitar cambios bruscos en el volumen
+
+# 5)CALCULOS DEL SNR 
+
+    def calcular_snr(señal, ruido):
+       potencia_señal = np.sum(señal ** 2)
+       potencia_ruido = np.sum(ruido ** 2)
+       return 10 * np.log10(potencia_señal / potencia_ruido) if potencia_ruido > 0 else float('inf')
+       
+Calcula la potencia de la señal → np.sum(señal ** 2).
+
+Calcula la potencia del ruido → np.sum(ruido ** 2).
+
+Convierte la relación a decibeles (dB) usando 10 * np.log10(señal / ruido).
+
+Se puede decir que las siguientes operaciones lograron hacer lo siguiente:
+
+*ICA → Separa una voz de la mezcla.
+
+*Beamforming (SVD) → Mejora la calidad de la señal.
+
+*SNR → Mide la relación entre la señal y el ruido.
+
+##GRAFICAS
