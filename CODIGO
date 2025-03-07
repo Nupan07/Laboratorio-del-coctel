@@ -1,35 +1,26 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar  6 09:10:52 2025
-
-@author: valen
-"""
-
-import matplotlib.pyplot as plt
 import numpy as np
 import librosa
 import sounddevice as sd
+import matplotlib.pyplot as plt
 from sklearn.decomposition import FastICA
-from scipy.signal import butter, lfilter
+from scipy.signal import welch
+from scipy.linalg import svd
 
 # Listas de archivos de audio
-archivos_voces = [r"C:\Users\valen\Downloads\Audio1.wav", 
-                  r"C:\Users\valen\Downloads\Audio2.wav"]
-archivos_ruido = [r"C:\Users\valen\Downloads\Ruidocel1.wav", 
-                  r"C:\Users\valen\Downloads\Ruido2.wav"]
+archivos_voces = [r"C:\Users\USER\Music\señales\lab del coctel\Audio1.wav", 
+                  r"C:\Users\USER\Music\señales\lab del coctel\Audio2.wav"]
+archivos_ruido = [r"C:\Users\USER\Music\señales\lab del coctel\Ruidocel1.wav", 
+                  r"C:\Users\USER\Music\señales\lab del coctel\Ruido2.wav"]
 
-# Cargar archivo de audio
 def cargar_audio(ruta):
     señal, tasa_muestreo = librosa.load(ruta, sr=None)
     return señal, tasa_muestreo
 
-# Reproducir un archivo de audio
 def reproducir_audio(señal, tasa_muestreo):
-    sd.play(señal, tasa_muestreo)
+    sd.play(señal / np.max(np.abs(señal)), tasa_muestreo)
     sd.wait()
 
-# Graficar señal de audio
-def mostrar_onda(señal, tasa_muestreo, titulo="Forma de onda"):
+def mostrar_onda(señal, tasa_muestreo, titulo):
     tiempo = np.linspace(0, len(señal) / tasa_muestreo, num=len(señal))
     plt.figure(figsize=(10, 4))
     plt.plot(tiempo, señal, color='navy', lw=1.2)
@@ -39,72 +30,94 @@ def mostrar_onda(señal, tasa_muestreo, titulo="Forma de onda"):
     plt.grid(alpha=0.5)
     plt.show()
 
-# Analizar espectro de frecuencias
-def espectro_frecuencias(señal, tasa_muestreo, titulo="Análisis Espectral"):
-    num_muestras = len(señal)
-    transformada = np.fft.fft(señal)
-    frecuencias = np.fft.fftfreq(num_muestras, d=1/tasa_muestreo)[:num_muestras//2]
+def mostrar_espectro(señal, tasa_muestreo, titulo):
+    N = len(señal)
+    frecuencia = np.fft.fftfreq(N, d=1/tasa_muestreo)
+    espectro = np.abs(np.fft.fft(señal))
     plt.figure(figsize=(10, 4))
-    plt.plot(frecuencias, np.abs(transformada[:num_muestras//2]), color='darkred')
+    plt.plot(frecuencia[:N//2], espectro[:N//2], color='brown')
     plt.xlabel('Frecuencia (Hz)')
     plt.ylabel('Magnitud')
     plt.title(titulo)
     plt.grid(alpha=0.5)
     plt.show()
 
-# Mezclar dos señales de audio
-def combinar_señales(audio1, audio2):
-    señal1, tasa = cargar_audio(audio1)
-    señal2, _ = cargar_audio(audio2)
-    tamaño_min = min(len(señal1), len(señal2))
-    return np.column_stack((señal1[:tamaño_min], señal2[:tamaño_min])), tasa
+def combinar_todos(archivos_audio, archivos_ruido):
+    señales = [cargar_audio(archivo)[0] for archivo in archivos_audio + archivos_ruido]
+    tamaño_min = min(map(len, señales))
+    mezcla = sum(señal[:tamaño_min] for señal in señales) / len(señales)
+    return np.column_stack((mezcla,)), cargar_audio(archivos_audio[0])[1]
 
-# Aplicar separación de fuentes con ICA
 def separar_fuentes(señal):
-    modelo_ica = FastICA(n_components=2, max_iter=1000, tol=0.0001, whiten='unit-variance')
+    modelo_ica = FastICA(n_components=1, max_iter=1000, tol=0.0001)
     componentes = modelo_ica.fit_transform(señal)
-    return componentes
+    return componentes / np.max(np.abs(componentes))
 
-# Calcular relación señal a ruido (SNR)
+def aplicar_beamforming(señal):
+    U, S, Vt = svd(señal, full_matrices=False)
+    señal_filtrada = np.outer(U[:, 0] * S[0], Vt[0, :])
+    return señal_filtrada / np.max(np.abs(señal_filtrada))
+
 def calcular_snr(señal, ruido):
     potencia_señal = np.sum(señal ** 2)
     potencia_ruido = np.sum(ruido ** 2)
-    if potencia_ruido == 0:
-        return float('inf')  # Evitar división por cero
-    snr = 10 * np.log10(potencia_señal / potencia_ruido)
+    return 10 * np.log10(potencia_señal / potencia_ruido) if potencia_ruido > 0 else float('inf')
 
-# Menú de opciones
 def mostrar_menu():
     print("\nOpciones:")
-    print("1. Reproducir audio")
-    print("2. Mostrar onda y espectro")
-    print("3. Mezclar y separar voces")
-    print("4. Salir")
+    print("1. SNR de cada audio con su ruido ")
+    print("2. Mezclaz")
+    print("3. Resaltar una voz sobre la otra en la mezcla")
+    print("4. Aplicar ICA y calcular SNR ")
+    print("5. Aplicar Beamforming y calcular SNR")
+    print("6. Salir")
 
-# Función principal
 def ejecutar():
     while True:
         mostrar_menu()
         opcion = input("Ingrese una opción: ")
+        
         if opcion == "1":
-            archivo = archivos_voces[int(input("Seleccione 1 para Audio1 o 2 para Audio2: ")) - 1]
-            señal, tasa = cargar_audio(archivo)
-            reproducir_audio(señal, tasa)
+            for i in range(len(archivos_voces)):
+                señal, tasa = cargar_audio(archivos_voces[i])
+                ruido, _ = cargar_audio(archivos_ruido[i])
+                snr = calcular_snr(señal, ruido)
+                mostrar_onda(señal, tasa, f"Señal {i+1}")
+                mostrar_espectro(señal, tasa, f"Análisis Espectral de Señal {i+1}")
+                print(f"SNR de Audio {i+1} con su Ruido: {snr:.2f} dB")
+        
         elif opcion == "2":
-            archivo = archivos_voces[int(input("Seleccione 1 para Audio1 o 2 para Audio2: ")) - 1]
-            señal, tasa = cargar_audio(archivo)
-            mostrar_onda(señal, tasa)
-            espectro_frecuencias(señal, tasa)
+            mezcla, tasa = combinar_todos(archivos_voces, archivos_ruido)
+            mostrar_onda(mezcla[:, 0], tasa, "Mezcla")
+            mostrar_espectro(mezcla[:, 0], tasa, "Espectro de la Mezcla")
+            reproducir_audio(mezcla[:, 0], tasa)
+        
         elif opcion == "3":
-            mezcla, tasa = combinar_señales(archivos_voces[0], archivos_voces[1])
-            componentes = separar_fuentes(mezcla)
-            for i, comp in enumerate(componentes.T):
-                mostrar_onda(comp, tasa, f"Componente Separada {i+1}")
-                espectro_frecuencias(comp, tasa, f"Espectro Componente {i+1}")
-                reproducir_audio(comp, tasa)
-            snr = calcular_snr(componentes[:, 0], componentes[:, 1])
-            print(f"SNR entre señal y ruido: {snr:.2f} dB")
+            mezcla, tasa = combinar_todos(archivos_voces, archivos_ruido)
+            mezcla[:, 0] *= 1.5
+            mostrar_onda(mezcla[:, 0], tasa, "Mezcla con una voz destacada")
+            mostrar_espectro(mezcla[:, 0], tasa, "Espectro de Mezcla con una voz destacada")
+            reproducir_audio(mezcla[:, 0], tasa)
+        
         elif opcion == "4":
+            mezcla, tasa = combinar_todos(archivos_voces, archivos_ruido)
+            componentes = separar_fuentes(mezcla)
+            snr = calcular_snr(mezcla[:, 0], mezcla[:, 0] - componentes[:, 0])
+            mostrar_onda(componentes[:, 0], tasa, "Componente separada por ICA")
+            mostrar_espectro(componentes[:, 0], tasa, "Espectro después de ICA")
+            print(f"SNR después de ICA: {snr:.2f} dB")
+            reproducir_audio(componentes[:, 0], tasa)
+        
+        elif opcion == "5":
+            mezcla, tasa = combinar_todos(archivos_voces, archivos_ruido)
+            filtrada = aplicar_beamforming(mezcla)
+            snr = calcular_snr(mezcla[:, 0], mezcla[:, 0] - filtrada[:, 0])
+            mostrar_onda(filtrada[:, 0], tasa, "Señal filtrada con Beamforming")
+            mostrar_espectro(filtrada[:, 0], tasa, "Espectro después de Beamforming")
+            print(f"SNR después de Beamforming: {snr:.2f} dB")
+            reproducir_audio(filtrada[:, 0], tasa)
+        
+        elif opcion == "6":
             print("Saliendo...")
             break
         else:
@@ -112,3 +125,4 @@ def ejecutar():
 
 if __name__ == "__main__":
     ejecutar()
+
