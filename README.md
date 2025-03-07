@@ -198,4 +198,12 @@ Se puede decir que las siguientes operaciones lograron hacer lo siguiente:
 
 *SNR → Mide la relación entre la señal y el ruido.
 
-##GRAFICAS
+## GRAFICAS
+
+# auidios y ruidos 
+
+[![imagen-2025-03-07-163108816.png](https://i.postimg.cc/dttw3kPV/imagen-2025-03-07-163108816.png)](https://postimg.cc/dDXzS0Vb)
+En esta primera imagen se puede observar el audio 1 con el ruido 1 y con el snr calculado 
+El SNR calculado del Audio 1 con su Ruido: 16.35 dB, indica que la señal de audio es aproximadamente 43 veces más fuerte que el ruido.
+[![imagen-2025-03-07-163823891.png](https://i.postimg.cc/ydQnTbd5/imagen-2025-03-07-163823891.png)](https://postimg.cc/ygRF1n0X)
+
