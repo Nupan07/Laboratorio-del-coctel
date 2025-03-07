@@ -96,6 +96,17 @@ El Análisis de Componentes Independientes (ICA) se basa en dos suposiciones fun
    
 Al aplicar ICA, es posible descomponer señales de audio mezcladas en un conjunto de señales independientes, con el objetivo de reconstruir las voces originales a partir de las grabaciones. Este proceso permite minimizar la interferencia entre las fuentes de sonido, mejorando la claridad de cada una de ellas.
 
+## BEAMFORMING
+
+Es una técnica avanzada de procesamiento de señales utilizada en sistemas de comunicación inalámbrica, radares y sistemas de audio. Su propósito principal es dirigir la señal en una dirección específica en lugar de transmitirla de manera omnidireccional. Esto mejora la calidad de la señal, reduce interferencias y optimiza el uso del ancho de banda.
+
+# COMO FUNCIONA EL BEAMFORMING
+
+El Beamforming se basa en el uso de una matriz de antenas o sensores dispuestos en una configuración específica. Cada antena dentro de esta matriz transmite la misma señal, pero con ajustes en la fase y amplitud de la onda. Estos ajustes se calculan de manera que:
+
+*Las ondas se sumen constructivamente en la dirección deseada, aumentando la potencia de la señal.
+
+*Las ondas se cancelen (interferencia destructiva) en direcciones no deseadas, reduciendo el ruido e interferencias.
 
 ## INICIO LABORATORIO 
 
