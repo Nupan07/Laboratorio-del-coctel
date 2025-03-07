@@ -203,7 +203,29 @@ Se puede decir que las siguientes operaciones lograron hacer lo siguiente:
 # auidios y ruidos 
 
 [![imagen-2025-03-07-163108816.png](https://i.postimg.cc/dttw3kPV/imagen-2025-03-07-163108816.png)](https://postimg.cc/dDXzS0Vb)
+
 En esta primera imagen se puede observar el audio 1 con el ruido 1 y con el snr calculado 
 El SNR calculado del Audio 1 con su Ruido: 16.35 dB, indica que la señal de audio es aproximadamente 43 veces más fuerte que el ruido.
+
 [![imagen-2025-03-07-163823891.png](https://i.postimg.cc/ydQnTbd5/imagen-2025-03-07-163823891.png)](https://postimg.cc/ygRF1n0X)
 
+El análisis espectral de la Señal 1 muestra la distribución de frecuencias en la señal de audio, evidenciando que la mayor parte de la energía se concentra en las bajas frecuencias, aproximadamente entre 0 y 1000 Hz, con picos significativos. A partir de esta región, la magnitud disminuye progresivamente, aunque persisten componentes de menor intensidad en frecuencias más altas, lo que podría ser indicativo de ruido. Esto sugiere que la señal tiene un fuerte contenido en bajas frecuencias, característico de la voz humana 
+
+[![imagen-2025-03-07-164125472.png](https://i.postimg.cc/vHz77KNv/imagen-2025-03-07-164125472.png)](https://postimg.cc/BXj14ms8)
+
+En esta segunda imagen se puede observar el audio 2 con el ruido 2 y con el snr calculado 
+El SNR calculado del Audio 2 con su Ruido: 39.70 dB, indica que la señal es aproximadamente 9315 veces más fuerte que el ruido, lo que representa una calidad de audio muy buena.
+
+[![imagen-2025-03-07-164454962.png](https://i.postimg.cc/KjYG6Rmj/imagen-2025-03-07-164454962.png)](https://postimg.cc/MMhJRZMJ)
+
+El análisis espectral de la Señal 2 muestra que la mayor parte de la energía está concentrada en las bajas frecuencias, principalmente por debajo de los 1000 Hz, con picos bien definidos que indican componentes dominantes en esa región. A medida que la frecuencia aumenta, la magnitud disminuye, aunque aún se pueden observar pequeñas variaciones en el espectro que pueden corresponder a ruido o armónicos. Comparado con la Señal 1, 
+
+# MEZCLA DE LOS AUDIOS Y RUIDOS 
+
+[![imagen-2025-03-07-164717713.png](https://i.postimg.cc/8zb1zRsc/imagen-2025-03-07-164717713.png)](https://postimg.cc/9Dr3xqdH)
+
+En esta grafica se puede observar las combinacion de los auidios con sus respecticos ruidos mostrandonos una señal mas grande y con mas ruido.
+
+[![imagen-2025-03-07-164906357.png](https://i.postimg.cc/kgYpsGpw/imagen-2025-03-07-164906357.png)](https://postimg.cc/dhd6tsvT)
+
+El análisis espectral de la mezcla de la combinación de la Señal 1 y la Señal 2, muestra una distribución de frecuencias similar a la de ambas señales individuales, con una concentración de energía predominante en las bajas frecuencias, especialmente por debajo de los 1000 Hz. Sin embargo, la magnitud en esta región parece ser una combinación de ambas señales, con picos más definidos que reflejan la superposición de sus componentes espectrales. En frecuencias más altas, la mezcla mantiene ciertas características de ruido, aunque con menor intensidad en comparación con la Señal 1, lo que sugiere que la mayor calidad fue la  de la Señal 2 .
