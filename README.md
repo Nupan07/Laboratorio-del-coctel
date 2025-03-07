@@ -101,7 +101,111 @@ Al aplicar ICA, es posible descomponer señales de audio mezcladas en un conjunt
 
 Como primera instancia haremos la realizacion de la grabacion de los dos audios y los dos ruidos donde utilizaremos dos telefonos celulares para capturar las señales de audio en la siguiente aplicacion y configuracion de cada celular
 
+![](https://github.com/Nupan07/Laboratorio-del-coctel/blob/main/Grabadoradevoz.jpg)
 
 
-- Los micofonos se colocan a una distancia de 4 metros entre si de forma horizontal como se muestra en el siguiente diagrama
+- Los micofonos se colocan a una distancia de 1 metro entre si de forma horizontal como se muestra en el siguiente diagrama
   
+   ![](https://github.com/Nupan07/Laboratorio-del-coctel/blob/main/Microfonos.jpg)
+
+  Donde ante esto iniciaremos la parte de programacion donde grabaremos 2 audios en 2 diferentes celulares y 2 ruidos los cuales se encontraran en .wav y los iniciaremos a llamar donde utilizaremos est fragmento
+
+  # Listas de archivos de audio
+archivos_voces = [r"C:\Users\valen\Downloads\Audio1.wav", 
+                  r"C:\Users\valen\Downloads\Audio2.wav"]
+archivos_ruido = [r"C:\Users\valen\Downloads\Ruidocel1.wav", 
+                  r"C:\Users\valen\Downloads\Ruido2.wav"]
+
+En el cual ante cargar esta señales procederemos a cargar y reproducir el audio en el cual usamos este fragmento 
+
+def cargar_audio(ruta):
+    señal, tasa_muestreo = librosa.load(ruta, sr=None)
+    return señal, tasa_muestreo
+
+def reproducir_audio(señal, tasa_muestreo):
+    sd.play(señal, tasa_muestreo)
+    sd.wait()
+
+2. Iniciaremos con la graficacion de la onda y su espectro mediante este fragmento de codigo
+
+   def mostrar_onda(señal, tasa_muestreo, titulo="Forma de onda"):
+    tiempo = np.linspace(0, len(señal) / tasa_muestreo, num=len(señal))
+    plt.figure(figsize=(10, 4))
+    plt.plot(tiempo, señal, color='navy', lw=1.2)
+    plt.xlabel('Tiempo (s)')
+    plt.ylabel('Amplitud')
+    plt.title(titulo)
+    plt.grid(alpha=0.5)
+    plt.show()
+
+   El cual nos muestra la siguiente grafica
+
+   ![](https://github.com/Nupan07/Laboratorio-del-coctel/blob/main/Se%C3%B1alM.png)
+
+   Esta señal representa la mezcla de dos fuentes de audio antes de aplicar el proceso de separación con Análisis de Componentes Independientes (ICA). En los siguientes pasos del análisis, se intentará descomponer esta señal en sus fuentes originales para obtener las voces individuales
+
+- Analisis espectral
+
+   ![](https://github.com/Nupan07/Laboratorio-del-coctel/blob/main/Captura%20de%20pantalla%202025-03-06%20224827.png)
+
+  3. Aplicaremos FastICA para la separacion de la señal
+ 
+     def separar_fuentes(señal_mixta, num_fuentes=2):
+    ica = FastICA(n_components=num_fuentes, random_state=0)
+    señales_separadas = ica.fit_transform(señal_mixta.T).T
+    return señales_separadas
+
+Esta función toma una señal mixta (mezcla de varias fuentes de audio) y aplica Análisis de Componentes Independientes (ICA) para separar las fuentes originales.
+ FastICA(n_components=num_fuentes) configura el modelo para extraer num_fuentes señales independientes.
+ 
+✔ Transposición (.T) antes y después de fit_transform() es necesaria porque FastICA espera señales organizadas en columnas.
+✔ La salida es un array donde cada fila representa una señal separada
+
+![](https://github.com/Nupan07/Laboratorio-del-coctel/blob/main/CS1.png)
+
+# Analisis espectral 
+
+![](https://github.com/Nupan07/Laboratorio-del-coctel/blob/main/EspectroC1.png)
+
+## AUDIO 2 (VOZ OLFRED)
+
+![](https://github.com/Nupan07/Laboratorio-del-coctel/blob/main/Cs2.png)
+
+**Analisis Espectral**
+
+![](https://github.com/Nupan07/Laboratorio-del-coctel/blob/main/ES2.png)
+
+Calculo SNR
+
+def calcular_snr(señal, ruido):
+    potencia_señal = np.sum(señal ** 2)
+    potencia_ruido = np.sum(ruido ** 2)
+    if potencia_ruido == 0:
+        return float('inf')  
+    snr = 10 * np.log10(potencia_señal / potencia_ruido)
+    return snr
+
+Donde nos arrojo los siguientes resultados :
+
+![](https://github.com/Nupan07/Laboratorio-del-coctel/blob/main/SNR2.png)
+
+## ANALISIS RESULTADOS 
+
+**Relación Señal a Ruido (SNR)**
+
+El cálculo del SNR permite evaluar la calidad de la separación de las fuentes de audio. Los resultados obtenidos son:
+
+SNR para Audio 1: 16.18 dB
+SNR para Audio 2: 19.93 dB
+
+Estos valores indican que la separación de las señales fue efectiva, logrando recuperar las fuentes de manera clara. Un SNR más alto sugiere una mejor relación entre la señal útil y el ruido residual.
+
+**Análisis Espectral**
+
+Se generó un gráfico de análisis espectral donde se puede observar la distribución de las frecuencias de la señal separada. La mayor concentración de energía se encuentra en las bajas frecuencias, lo que es consistente con la presencia de componentes predominantes en esta región del espectro.
+
+**Forma de Onda de la Señal Mixta**
+
+En la representación temporal de la señal mixta, se observa una superposición de las fuentes originales. El análisis de esta forma de onda es clave para entender la complejidad de la separación.
+
+
