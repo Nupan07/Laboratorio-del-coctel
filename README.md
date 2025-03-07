@@ -266,3 +266,5 @@ SNR después de Beamforming: 10.81 dB
 El análisis espectral después de aplicar Beamforming  muestra una distribución de frecuencias similar a la señal mezclada original y la des´pues de aplicar el ICA, con la mayor parte de la energía concentrada en las bajas frecuencias (por debajo de 1000 Hz). El contenido de alta frecuencia sigue presente, pero en menor magnitud, lo que indica que el Beamforming no ha filtrado significativamente el ruido.
 
 ## ANALISIS DE DATOS 
+
+El análisis de las señales revela que la Señal 1 tenía un SNR de 16.35 dB, indicando una calidad moderada con presencia de ruido, mientras que la Señal 2 tenía un SNR de 39.70 dB, lo que sugiere una señal mucho más limpia. La combinación de ambas señales generó un espectro con predominancia en frecuencias bajas y posibles interferencias, lo que pudo haber reducido el SNR global. Luego, se intentó destacar la Señal 1 en la mezcla, lo que aumentó su presencia en el espectro pero sin una mejora sustancial en la relación señal a ruido. 
